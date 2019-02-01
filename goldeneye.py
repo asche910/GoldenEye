@@ -114,6 +114,7 @@ USER_AGENT_PARTS = {
 # GoldenEye Class
 ####
 
+
 class GoldenEye(object):
 
     # Counters

